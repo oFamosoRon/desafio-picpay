@@ -4,15 +4,17 @@ import android.view.View
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.picpay.desafio.android.data.PicPayApi
 import com.picpay.desafio.android.R
+import com.picpay.desafio.android.data.PicPayApi
 import com.picpay.desafio.android.data.PicPayService
-import com.picpay.desafio.android.domain.User
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.picpay.desafio.android.data.UserRepositoryImpl
+import com.picpay.desafio.android.domain.UserRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
@@ -22,6 +24,10 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     private val api: PicPayApi by lazy {
         PicPayService.api
+    }
+
+    private val userRepository: UserRepository by lazy {
+        UserRepositoryImpl(api)
     }
 
     override fun onResume() {
@@ -35,9 +41,16 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         progressBar.visibility = View.VISIBLE
-        api.getUsers()
-            .enqueue(object : Callback<List<User>> {
-                override fun onFailure(call: Call<List<User>>, t: Throwable) {
+
+        this.lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val users = userRepository.getUsers()
+                withContext(Dispatchers.Main) {
+                    progressBar.visibility = View.GONE
+                    adapter.users = users
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
                     val message = getString(R.string.error)
 
                     progressBar.visibility = View.GONE
@@ -46,12 +59,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                     Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT)
                         .show()
                 }
-
-                override fun onResponse(call: Call<List<User>>, response: Response<List<User>>) {
-                    progressBar.visibility = View.GONE
-
-                    adapter.users = response.body()!!
-                }
-            })
+            }
+        }
     }
 }
