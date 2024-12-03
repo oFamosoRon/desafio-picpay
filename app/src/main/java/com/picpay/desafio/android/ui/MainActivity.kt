@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.picpay.desafio.android.R
 import com.picpay.desafio.android.data.PicPayApi
-import com.picpay.desafio.android.data.PicPayService
 import com.picpay.desafio.android.data.UserRepositoryImpl
+import com.picpay.desafio.android.di.UserRepositoryProvider.userRepository
 import com.picpay.desafio.android.domain.UserRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,14 +21,6 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     private lateinit var recyclerView: RecyclerView
     private lateinit var progressBar: ProgressBar
     private lateinit var adapter: UserListAdapter
-
-    private val api: PicPayApi by lazy {
-        PicPayService.api
-    }
-
-    private val userRepository: UserRepository by lazy {
-        UserRepositoryImpl(api)
-    }
 
     override fun onResume() {
         super.onResume()
