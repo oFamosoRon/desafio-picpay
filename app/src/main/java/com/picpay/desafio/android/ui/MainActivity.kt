@@ -5,31 +5,26 @@ import android.view.View
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.picpay.desafio.android.R
-import com.picpay.desafio.android.di.MainViewModelFactory
-import com.picpay.desafio.android.di.UserRepositoryProvider.userRepository
-import com.picpay.desafio.android.domain.use_case.GetUsersUseCase
 import com.picpay.desafio.android.domain.model.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var progressBar: ProgressBar
     private lateinit var adapter: UserListAdapter
-    private lateinit var viewModel: MainViewModel
+
+    private val viewModel: MainViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val factory = MainViewModelFactory(GetUsersUseCase(userRepository = userRepository))
-        viewModel = ViewModelProvider(this, factory).get(MainViewModel::class.java)
 
         recyclerView = findViewById(R.id.recyclerView)
         progressBar = findViewById(R.id.user_list_progress_bar)
