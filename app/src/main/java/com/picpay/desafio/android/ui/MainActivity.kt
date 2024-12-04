@@ -16,7 +16,6 @@ import com.picpay.desafio.android.domain.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
@@ -47,14 +46,14 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     }
 
     private fun collectUiStateChanges() {
-        lifecycleScope.launch(Dispatchers.IO) {
+        lifecycleScope.launch(Dispatchers.Main) {
             viewModel.uiState.collect { state ->
                 updateScreen(state)
             }
         }
     }
 
-    private suspend fun updateScreen(state: UiState) {
+    private fun updateScreen(state: UiState) {
         when (state) {
             is UiState.Success -> {
                 setSuccessState(state.users)
@@ -70,28 +69,22 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         }
     }
 
-    private suspend fun setLoadingState() {
-        withContext(Dispatchers.Main) {
-            recyclerView.visibility = View.GONE
-            progressBar.visibility = View.VISIBLE
-        }
+    private fun setLoadingState() {
+        recyclerView.visibility = View.GONE
+        progressBar.visibility = View.VISIBLE
     }
 
-    private suspend fun setSuccessState(users: List<User>) {
-        withContext(Dispatchers.Main) {
-            adapter.users = users
-            recyclerView.visibility = View.VISIBLE
-            progressBar.visibility = View.GONE
-        }
+    private fun setSuccessState(users: List<User>) {
+        adapter.users = users
+        recyclerView.visibility = View.VISIBLE
+        progressBar.visibility = View.GONE
     }
 
-    private suspend fun setErrorState() {
-        withContext(Dispatchers.Main) {
-            val message = getString(R.string.error)
-            Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT)
-                .show()
-            progressBar.visibility = View.GONE
-            recyclerView.visibility = View.GONE
-        }
+    private fun setErrorState() {
+        val message = getString(R.string.error)
+        Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT)
+            .show()
+        progressBar.visibility = View.GONE
+        recyclerView.visibility = View.GONE
     }
 }
