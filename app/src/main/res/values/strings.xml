@@ -2,5 +2,7 @@
     <string name="app_name">PicPay</string>
     <string name="title">Contatos</string>
     <string name="error">Ocorreu um erro. Tente novamente.</string>
+    <string name="name_not_provided">Nome não encontrado.</string>
+    <string name="username_not_provided">Nome de usuário nao encontrado</string>
 
 </resources>

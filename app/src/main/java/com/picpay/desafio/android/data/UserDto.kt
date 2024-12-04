@@ -1,8 +1,10 @@
 package com.picpay.desafio.android.data
 
+import com.google.gson.annotations.SerializedName
+
 data class UserDto(
-   val img: String,
-   val name: String,
-   val id: Int,
-   val username: String
+    @SerializedName("id") val id: Int,
+    @SerializedName("name") val name: String?,
+    @SerializedName("username") val username: String?,
+    @SerializedName("img") val img: String?
 )

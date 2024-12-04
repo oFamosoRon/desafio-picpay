@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.picpay.desafio.android.R
 import com.picpay.desafio.android.di.MainViewModelFactory
 import com.picpay.desafio.android.di.UserRepositoryProvider.userRepository
+import com.picpay.desafio.android.domain.GetUsersUseCase
 import com.picpay.desafio.android.domain.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
@@ -27,13 +28,8 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val factory = MainViewModelFactory(userRepository)
+        val factory = MainViewModelFactory(GetUsersUseCase(userRepository = userRepository))
         viewModel = ViewModelProvider(this, factory).get(MainViewModel::class.java)
-
-    }
-
-    override fun onResume() {
-        super.onResume()
 
         recyclerView = findViewById(R.id.recyclerView)
         progressBar = findViewById(R.id.user_list_progress_bar)
@@ -60,7 +56,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
             }
 
             is UiState.Error -> {
-                setErrorState()
+                setErrorState(state.message)
             }
 
             UiState.Loading -> {
@@ -80,10 +76,9 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         progressBar.visibility = View.GONE
     }
 
-    private fun setErrorState() {
+    private fun setErrorState(exceptionMessage: String?) {
         val message = getString(R.string.error)
-        Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT)
-            .show()
+        Toast.makeText(this@MainActivity, exceptionMessage ?: message, Toast.LENGTH_SHORT).show()
         progressBar.visibility = View.GONE
         recyclerView.visibility = View.GONE
     }

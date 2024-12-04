@@ -13,20 +13,28 @@ class UserListItemViewHolder(
 ) : RecyclerView.ViewHolder(itemView) {
 
     fun bind(user: User) {
-        itemView.name.text = user.name
-        itemView.username.text = user.username
+        itemView.name.text = user.name ?: itemView.context.getString(R.string.name_not_provided)
+        itemView.username.text =
+            user.username ?: itemView.context.getString(R.string.username_not_provided)
         itemView.progressBar.visibility = View.VISIBLE
-        Picasso.get()
-            .load(user.img)
-            .error(R.drawable.ic_round_account_circle)
-            .into(itemView.picture, object : Callback {
-                override fun onSuccess() {
-                    itemView.progressBar.visibility = View.GONE
-                }
 
-                override fun onError(e: Exception?) {
-                    itemView.progressBar.visibility = View.GONE
-                }
-            })
+        user.img?.let { img ->
+            Picasso.get()
+                .load(img)
+                .error(R.drawable.ic_round_account_circle)
+                .into(itemView.picture, object : Callback {
+                    override fun onSuccess() {
+                        itemView.progressBar.visibility = View.GONE
+                    }
+
+                    override fun onError(e: Exception?) {
+                        itemView.progressBar.visibility = View.GONE
+                    }
+                })
+        } ?: run {
+            val placeHolderIcon = itemView.context.getDrawable(R.drawable.ic_round_account_circle)
+            itemView.picture.setImageDrawable(placeHolderIcon)
+            itemView.progressBar.visibility = View.GONE
+        }
     }
 }
