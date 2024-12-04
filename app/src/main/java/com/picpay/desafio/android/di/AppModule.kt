@@ -9,7 +9,12 @@ import org.koin.dsl.module
 
 val appModule = module {
 
-    single<UserRepository> { UserRepositoryImpl(get()) }
+    single<UserRepository> {
+        UserRepositoryImpl(
+            api = get(),
+            dao = get()
+        )
+    }
     single { GetUsersUseCase(get()) }
     viewModel { MainViewModel(get()) }
 
