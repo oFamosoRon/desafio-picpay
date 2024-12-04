@@ -1,7 +1,9 @@
-package com.picpay.desafio.android.data
+package com.picpay.desafio.android.data.repository
 
-import com.picpay.desafio.android.domain.User
-import com.picpay.desafio.android.domain.UserRepository
+import com.picpay.desafio.android.data.model.UserDto
+import com.picpay.desafio.android.data.remote.PicPayApi
+import com.picpay.desafio.android.domain.model.User
+import com.picpay.desafio.android.domain.repository.UserRepository
 
 class UserRepositoryImpl(
     private val api: PicPayApi

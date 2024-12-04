@@ -12,8 +12,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.picpay.desafio.android.R
 import com.picpay.desafio.android.di.MainViewModelFactory
 import com.picpay.desafio.android.di.UserRepositoryProvider.userRepository
-import com.picpay.desafio.android.domain.GetUsersUseCase
-import com.picpay.desafio.android.domain.User
+import com.picpay.desafio.android.domain.use_case.GetUsersUseCase
+import com.picpay.desafio.android.domain.model.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch

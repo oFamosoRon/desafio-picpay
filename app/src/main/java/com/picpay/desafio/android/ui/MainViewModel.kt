@@ -3,7 +3,7 @@ package com.picpay.desafio.android.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.picpay.desafio.android.core.ResultWrapper
-import com.picpay.desafio.android.domain.GetUsersUseCase
+import com.picpay.desafio.android.domain.use_case.GetUsersUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

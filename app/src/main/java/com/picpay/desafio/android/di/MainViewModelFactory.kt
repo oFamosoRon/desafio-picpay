@@ -2,8 +2,7 @@ package com.picpay.desafio.android.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.picpay.desafio.android.domain.GetUsersUseCase
-import com.picpay.desafio.android.domain.UserRepository
+import com.picpay.desafio.android.domain.use_case.GetUsersUseCase
 import com.picpay.desafio.android.ui.MainViewModel
 
 class MainViewModelFactory(

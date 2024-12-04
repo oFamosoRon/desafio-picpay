@@ -1,6 +1,8 @@
-package com.picpay.desafio.android.domain
+package com.picpay.desafio.android.domain.use_case
 
 import com.picpay.desafio.android.core.ResultWrapper
+import com.picpay.desafio.android.domain.repository.UserRepository
+import com.picpay.desafio.android.domain.model.User
 
 class GetUsersUseCase(
     private val userRepository: UserRepository

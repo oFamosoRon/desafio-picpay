@@ -1,6 +1,6 @@
 package com.picpay.desafio.android.ui
 
-import com.picpay.desafio.android.domain.User
+import com.picpay.desafio.android.domain.model.User
 
 sealed class UiState {
     object Loading : UiState()

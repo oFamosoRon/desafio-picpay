@@ -1,8 +1,8 @@
 package com.picpay.desafio.android.di
 
-import com.picpay.desafio.android.data.PicPayApi
-import com.picpay.desafio.android.data.UserRepositoryImpl
-import com.picpay.desafio.android.domain.UserRepository
+import com.picpay.desafio.android.data.remote.PicPayApi
+import com.picpay.desafio.android.data.repository.UserRepositoryImpl
+import com.picpay.desafio.android.domain.repository.UserRepository
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Request
