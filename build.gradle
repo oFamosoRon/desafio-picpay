@@ -24,14 +24,15 @@ buildscript {
 
         koin_version = "2.0.1"
         dagger_version = "2.23.2"
-        lifecycle_version = "2.2.0"
-        coroutines_version = "1.4.0"
+        lifecycle_version = "2.4.0"
+        coroutines_version = "1.6.1"
         rxjava_version = "2.2.17"
         rxandroid_version = "2.1.1"
         core_ktx_test_version = "1.2.0"
 
         gson_version = "2.8.6"
         room_version = "2.4.1"
+        nav_version = "2.4.2"
     }
 
     repositories {
