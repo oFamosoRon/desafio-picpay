@@ -6,28 +6,34 @@ import com.picpay.desafio.android.data.remote.UserDto
 import com.picpay.desafio.android.data.remote.PicPayApi
 import com.picpay.desafio.android.domain.model.User
 import com.picpay.desafio.android.domain.repository.UserRepository
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 class UserRepositoryImpl(
     private val api: PicPayApi,
     private val dao: UserDao
 ) : UserRepository {
+
+    private val mutex = Mutex()
+
     override suspend fun getUsers(): List<User> {
+        mutex.withLock {
+            val users = dao.getAllUsers()
 
-        val users = dao.getAllUsers()
-
-        if (users.isNotEmpty()) {
-            return users.map { it.toDomain() }
-        }
-
-        val usersFromApi = api.getUsers().map { it.toDomain() }
-
-        usersFromApi
-            .map { it.toEntity() }
-            .forEach { userEntity ->
-                dao.insertUser(userEntity)
+            if (users.isNotEmpty()) {
+                return users.map { it.toDomain() }
             }
 
-        return usersFromApi
+            val usersFromApi = api.getUsers().map { it.toDomain() }
+
+            usersFromApi
+                .map { it.toEntity() }
+                .forEach { userEntity ->
+                    dao.insertUser(userEntity)
+                }
+
+            return usersFromApi
+        }
     }
 
     private fun UserDto.toDomain(): User {
