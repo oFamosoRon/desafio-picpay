@@ -22,7 +22,7 @@ class UsersViewModel(
     }
 
     private fun getUsers() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             when (val result = getUsersUseCase()) {
                 is ResultWrapper.Success -> {
                     _uiState.value = UiState.Success(users = result.data)
