@@ -18,7 +18,7 @@ android {
 
         vectorDrawables.useSupportLibrary = true
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "com.picpay.desafio.android.InstrumentationTestRunner"
     }
     buildTypes {
         debug {}
@@ -59,8 +59,12 @@ dependencies {
     implementation "io.insert-koin:koin-core:$koin_version"
     implementation "io.insert-koin:koin-android:$koin_version"
     implementation "io.insert-koin:koin-androidx-viewmodel:$koin_version"
+    implementation 'androidx.fragment:fragment-testing:1.5.5'
+    implementation "androidx.test.espresso:espresso-contrib:$espresso_version"
     testImplementation "io.insert-koin:koin-test:$koin_version"
-//    testImplementation "io.insert-koin:koin-test-junit4:$koin_version"
+    androidTestImplementation "io.insert-koin:koin-test:$koin_version"
+
+    androidTestImplementation("io.mockk:mockk-android:1.12.1")
 
     testImplementation "app.cash.turbine:turbine:$turbine_version"
     testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
