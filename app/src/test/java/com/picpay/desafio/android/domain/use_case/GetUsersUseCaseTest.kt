@@ -1,7 +1,10 @@
 package com.picpay.desafio.android.domain.use_case
 
 import com.picpay.desafio.android.core.ResultWrapper
-import com.picpay.desafio.android.data.repository.FakeUserRepository
+import com.picpay.desafio.android.data.local.FakeDao
+import com.picpay.desafio.android.data.local.UserDao
+import com.picpay.desafio.android.data.remote.FakePicPayApi
+import com.picpay.desafio.android.data.remote.PicPayApi
 import com.picpay.desafio.android.di.testModule
 import com.picpay.desafio.android.domain.repository.UserRepository
 import junit.framework.TestCase.assertFalse
@@ -52,8 +55,11 @@ class GetUsersUseCaseTest : KoinTest {
     @Test
     fun useCasesIsInvoked_returnsError() = runTest {
         //Given: some error happens during the data loading
-        val repository = get<UserRepository>() as FakeUserRepository
-        repository.testScenario = FakeUserRepository.TestScenario.Failure
+        val api = get<PicPayApi>() as FakePicPayApi
+        api.testScenario = FakePicPayApi.TestScenario.Failure
+
+        val dao = get<UserDao>() as FakeDao
+        dao.testScenario = FakeDao.TestScenario.Failure
 
         //And
         val useCase = get<GetUsersUseCase>()

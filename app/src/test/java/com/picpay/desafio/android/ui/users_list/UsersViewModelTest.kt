@@ -1,9 +1,11 @@
 package com.picpay.desafio.android.ui.users_list
 
 import app.cash.turbine.test
-import com.picpay.desafio.android.data.repository.FakeUserRepository
+import com.picpay.desafio.android.data.local.FakeDao
+import com.picpay.desafio.android.data.local.UserDao
+import com.picpay.desafio.android.data.remote.FakePicPayApi
+import com.picpay.desafio.android.data.remote.PicPayApi
 import com.picpay.desafio.android.di.testModule
-import com.picpay.desafio.android.domain.repository.UserRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -52,9 +54,12 @@ class UsersViewModelTest : KoinTest {
 
     @Test
     fun viewModelIsInstantiated_stateStartsToBeUpdated_stateStopsUpdatingOnError() = runTest {
-        //Given: an error happens during the data loading
-        val repository = get<UserRepository>() as FakeUserRepository
-        repository.testScenario = FakeUserRepository.TestScenario.Failure
+        //Given: some error happens during the data loading
+        val api = get<PicPayApi>() as FakePicPayApi
+        api.testScenario = FakePicPayApi.TestScenario.Failure
+
+        val dao = get<UserDao>() as FakeDao
+        dao.testScenario = FakeDao.TestScenario.Failure
 
         val viewModel = get<UsersViewModel>()
 
