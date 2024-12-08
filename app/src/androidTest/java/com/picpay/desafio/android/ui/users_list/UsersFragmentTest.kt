@@ -5,7 +5,6 @@ import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.RecyclerView
-import androidx.test.espresso.Espresso.onData
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
@@ -17,6 +16,8 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import com.picpay.desafio.android.R
 import com.picpay.desafio.android.di.mockedViewModelUiState
 import com.picpay.desafio.android.domain.model.User
+import com.picpay.desafio.android.ui.users_list.state.UiState
+import com.picpay.desafio.android.ui.users_list.view.UsersFragment
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.Description
 import org.hamcrest.Matcher

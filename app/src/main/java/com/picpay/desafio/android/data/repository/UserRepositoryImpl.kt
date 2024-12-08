@@ -2,8 +2,8 @@ package com.picpay.desafio.android.data.repository
 
 import com.picpay.desafio.android.data.local.UserDao
 import com.picpay.desafio.android.data.local.UserEntity
-import com.picpay.desafio.android.data.remote.UserDto
 import com.picpay.desafio.android.data.remote.PicPayApi
+import com.picpay.desafio.android.data.remote.UserDto
 import com.picpay.desafio.android.domain.model.User
 import com.picpay.desafio.android.domain.repository.UserRepository
 import kotlinx.coroutines.sync.Mutex
@@ -16,7 +16,7 @@ class UserRepositoryImpl(
 
     private val mutex = Mutex()
 
-    override suspend fun getUsers(): List<User> {
+    override suspend fun loadUsers(): List<User> {
         mutex.withLock {
             val users = dao.getAllUsers()
 
@@ -25,15 +25,33 @@ class UserRepositoryImpl(
             }
 
             val usersFromApi = api.getUsers().map { it.toDomain() }
-
-            usersFromApi
-                .map { it.toEntity() }
-                .forEach { userEntity ->
-                    dao.insertUser(userEntity)
-                }
-
+            insertUsersAtLocalDatabase(usersFromApi)
             return usersFromApi
         }
+    }
+
+    override suspend fun refreshUsers(): List<User> {
+        mutex.withLock {
+            return try {
+                val usersFromApi = api.getUsers().map { it.toDomain() }
+                if (usersFromApi.isNotEmpty()) {
+                    insertUsersAtLocalDatabase(usersFromApi)
+                }
+
+                usersFromApi
+            } catch (e: Exception) {
+                val users = dao.getAllUsers()
+                users.map { it.toDomain() }
+            }
+        }
+    }
+
+    private suspend fun insertUsersAtLocalDatabase(usersFromApi: List<User>) {
+        usersFromApi
+            .map { it.toEntity() }
+            .forEach { userEntity ->
+                dao.insertUser(userEntity)
+            }
     }
 
     private fun UserDto.toDomain(): User {
