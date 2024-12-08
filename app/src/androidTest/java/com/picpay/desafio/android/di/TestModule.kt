@@ -1,7 +1,7 @@
 package com.picpay.desafio.android.di
 
-import com.picpay.desafio.android.ui.users_list.UiState
-import com.picpay.desafio.android.ui.users_list.UsersViewModel
+import com.picpay.desafio.android.ui.users_list.state.UiState
+import com.picpay.desafio.android.ui.users_list.state.UsersViewModel
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.MutableStateFlow

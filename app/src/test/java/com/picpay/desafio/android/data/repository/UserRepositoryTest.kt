@@ -52,7 +52,7 @@ class UserRepositoryTest : KoinTest {
         val repository = get<UserRepository>()
 
         //When: data is requested from repository
-        val result = repository.getUsers()
+        val result = repository.loadUsers()
 
         //Then: api is called
         assert(api.apiCalled)
@@ -76,7 +76,7 @@ class UserRepositoryTest : KoinTest {
 
         assertFailsWith<IllegalStateException>() {
             //When: data is requested from repository
-            repository.getUsers()
+            repository.loadUsers()
             //Then: api is called
             assert(api.apiCalled)
             //And: local cache is not populated
@@ -97,7 +97,7 @@ class UserRepositoryTest : KoinTest {
         val repository = get<UserRepository>()
 
         //When: data is requested from repository
-        val result = repository.getUsers()
+        val result = repository.loadUsers()
 
         //Then: api is not called
         assertFalse(api.apiCalled)
@@ -116,7 +116,7 @@ class UserRepositoryTest : KoinTest {
 
         assertFailsWith<IllegalStateException>() {
             //When: data is requested from repository
-            repository.getUsers()
+            repository.loadUsers()
 
             //Then: exception is thrown
         }
@@ -135,7 +135,7 @@ class UserRepositoryTest : KoinTest {
         val repository = get<UserRepository>()
 
         //When: data is requested from repository
-        val result = repository.getUsers()
+        val result = repository.loadUsers()
 
         //Then: api is called
         assert(api.apiCalled)
@@ -156,7 +156,7 @@ class UserRepositoryTest : KoinTest {
         val repository = get<UserRepository>()
 
         //When: data is requested from repository
-        val result = repository.getUsers()
+        val result = repository.loadUsers()
 
         //And: valid data is returned
         assert(result.isNotEmpty())

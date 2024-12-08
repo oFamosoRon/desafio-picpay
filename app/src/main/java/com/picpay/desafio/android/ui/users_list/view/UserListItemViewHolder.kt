@@ -1,6 +1,5 @@
-package com.picpay.desafio.android.ui.users_list
+package com.picpay.desafio.android.ui.users_list.view
 
-import android.annotation.SuppressLint
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.picpay.desafio.android.R

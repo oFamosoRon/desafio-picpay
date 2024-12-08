@@ -1,13 +1,12 @@
-package com.picpay.desafio.android.ui.users_list
+package com.picpay.desafio.android.domain.use_case
 
-import app.cash.turbine.test
+import com.picpay.desafio.android.core.ResultWrapper
 import com.picpay.desafio.android.data.local.FakeDao
 import com.picpay.desafio.android.data.local.UserDao
 import com.picpay.desafio.android.data.remote.FakePicPayApi
 import com.picpay.desafio.android.data.remote.PicPayApi
 import com.picpay.desafio.android.di.testModule
-import com.picpay.desafio.android.ui.users_list.state.UiState
-import com.picpay.desafio.android.ui.users_list.state.UsersViewModel
+import junit.framework.TestCase.assertFalse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -21,10 +20,11 @@ import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.test.KoinTest
 import org.koin.test.get
-import kotlin.test.assertIs
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class UsersViewModelTest : KoinTest {
+class LoadUsersUseCaseTest : KoinTest {
+
+    private lateinit var useCase: LoadUsersUseCase
 
     @Before
     fun setUp() {
@@ -32,6 +32,8 @@ class UsersViewModelTest : KoinTest {
         startKoin {
             modules(testModule)
         }
+
+        useCase = get<LoadUsersUseCase>()
     }
 
     @After
@@ -41,21 +43,19 @@ class UsersViewModelTest : KoinTest {
     }
 
     @Test
-    fun viewModelIsInstantiated_stateStartsToBeUpdated_stateStopsUpdatingOnSuccess() = runTest {
-        //Given
-        val viewModel = get<UsersViewModel>()
+    fun useCasesIsInvoked_returnsSuccess() = runTest {
 
-        //When: the view model uiState starts being collected
-        viewModel.uiState.test {
-            //Then: the initial state is Loading
-            assertIs<UiState.Loading>(awaitItem())
-            //And: the next and final state is success
-            assertIs<UiState.Success>(awaitItem())
-        }
+        //When: use case is invoked
+        val result = useCase()
+
+        //Then: it returns success
+        assert(result is ResultWrapper.Success)
+        //And: it contains valid data
+        assert((result as ResultWrapper.Success).data.isNotEmpty())
     }
 
     @Test
-    fun viewModelIsInstantiated_stateStartsToBeUpdated_stateStopsUpdatingOnError() = runTest {
+    fun useCasesIsInvoked_returnsError() = runTest {
         //Given: some error happens during the data loading
         val api = get<PicPayApi>() as FakePicPayApi
         api.testScenario = FakePicPayApi.TestScenario.Failure
@@ -63,14 +63,12 @@ class UsersViewModelTest : KoinTest {
         val dao = get<UserDao>() as FakeDao
         dao.testScenario = FakeDao.TestScenario.Failure
 
-        val viewModel = get<UsersViewModel>()
+        //When: use case is invoked
+        val result = useCase()
 
-        //When: the view model uiState starts being collected
-        viewModel.uiState.test {
-            //Then: the initial state is Loading
-            assertIs<UiState.Loading>(awaitItem())
-            //And: the next and final state is Error
-            assertIs<UiState.Error>(awaitItem())
-        }
+        //Then: it returns error
+        assert(result is ResultWrapper.Error)
+        //And: it contains some error message
+        assertFalse((result as ResultWrapper.Error).message.isNullOrBlank())
     }
 }

@@ -6,6 +6,8 @@ apply plugin: 'kotlin-android-extensions'
 
 apply plugin: 'kotlin-kapt'
 
+apply plugin: "io.gitlab.arturbosch.detekt"
+
 android {
 
     compileSdkVersion 34
@@ -56,10 +58,12 @@ dependencies {
 
     implementation "com.google.android.material:material:$material_version"
 
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:$swipe_refresh_version"
+
     implementation "io.insert-koin:koin-core:$koin_version"
     implementation "io.insert-koin:koin-android:$koin_version"
     implementation "io.insert-koin:koin-androidx-viewmodel:$koin_version"
-    implementation 'androidx.fragment:fragment-testing:1.5.5'
+    implementation "androidx.fragment:fragment-testing:$fragment_test"
     implementation "androidx.test.espresso:espresso-contrib:$espresso_version"
     testImplementation "io.insert-koin:koin-test:$koin_version"
     androidTestImplementation "io.insert-koin:koin-test:$koin_version"

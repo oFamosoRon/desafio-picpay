@@ -1,13 +1,12 @@
 package com.picpay.desafio.android.data.repository
 
 import com.picpay.desafio.android.data.local.UserDao
-import com.picpay.desafio.android.data.local.UserEntity
-import com.picpay.desafio.android.data.remote.UserDto
 import com.picpay.desafio.android.data.remote.PicPayApi
 import com.picpay.desafio.android.domain.model.User
 import com.picpay.desafio.android.domain.repository.UserRepository
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlin.coroutines.cancellation.CancellationException
 
 class UserRepositoryImpl(
     private val api: PicPayApi,
@@ -16,7 +15,7 @@ class UserRepositoryImpl(
 
     private val mutex = Mutex()
 
-    override suspend fun getUsers(): List<User> {
+    override suspend fun loadUsers(): List<User> {
         mutex.withLock {
             val users = dao.getAllUsers()
 
@@ -25,41 +24,35 @@ class UserRepositoryImpl(
             }
 
             val usersFromApi = api.getUsers().map { it.toDomain() }
-
-            usersFromApi
-                .map { it.toEntity() }
-                .forEach { userEntity ->
-                    dao.insertUser(userEntity)
-                }
-
+            insertUsersAtLocalDatabase(usersFromApi)
             return usersFromApi
         }
     }
 
-    private fun UserDto.toDomain(): User {
-        return User(
-            id = id,
-            img = img,
-            name = name,
-            username = username
-        )
+    @Suppress("RethrowCaughtException")
+    override suspend fun refreshUsers(): List<User> {
+        mutex.withLock {
+            return try {
+                val usersFromApi = api.getUsers().map { it.toDomain() }
+                if (usersFromApi.isNotEmpty()) {
+                    insertUsersAtLocalDatabase(usersFromApi)
+                }
+
+                usersFromApi
+            } catch (cancellationException: CancellationException) {
+                throw cancellationException
+            } finally {
+                val users = dao.getAllUsers()
+                users.map { it.toDomain() }
+            }
+        }
     }
 
-    private fun UserEntity.toDomain(): User {
-        return User(
-            id = id,
-            img = img,
-            name = name,
-            username = username
-        )
-    }
-
-    private fun User.toEntity(): UserEntity {
-        return UserEntity(
-            id = id,
-            img = img,
-            name = name,
-            username = username
-        )
+    private suspend fun insertUsersAtLocalDatabase(usersFromApi: List<User>) {
+        usersFromApi
+            .map { it.toEntity() }
+            .forEach { userEntity ->
+                dao.insertUser(userEntity)
+            }
     }
 }

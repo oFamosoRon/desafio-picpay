@@ -6,7 +6,6 @@ import com.picpay.desafio.android.data.local.UserDao
 import com.picpay.desafio.android.data.remote.FakePicPayApi
 import com.picpay.desafio.android.data.remote.PicPayApi
 import com.picpay.desafio.android.di.testModule
-import com.picpay.desafio.android.domain.repository.UserRepository
 import junit.framework.TestCase.assertFalse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -23,13 +22,18 @@ import org.koin.test.KoinTest
 import org.koin.test.get
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class GetUsersUseCaseTest : KoinTest {
+class RefreshUsersUseCaseTest : KoinTest {
+
+    private lateinit var useCase: RefreshUsersUseCase
+
     @Before
     fun setUp() {
         Dispatchers.setMain(StandardTestDispatcher())
         startKoin {
             modules(testModule)
         }
+
+        useCase = get<RefreshUsersUseCase>()
     }
 
     @After
@@ -40,8 +44,6 @@ class GetUsersUseCaseTest : KoinTest {
 
     @Test
     fun useCasesIsInvoked_returnsSuccess() = runTest {
-        //Given
-        val useCase = get<GetUsersUseCase>()
 
         //When: use case is invoked
         val result = useCase()
@@ -60,9 +62,6 @@ class GetUsersUseCaseTest : KoinTest {
 
         val dao = get<UserDao>() as FakeDao
         dao.testScenario = FakeDao.TestScenario.Failure
-
-        //And
-        val useCase = get<GetUsersUseCase>()
 
         //When: use case is invoked
         val result = useCase()
