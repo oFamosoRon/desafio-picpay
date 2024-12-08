@@ -10,7 +10,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 val networkModule = module {
-    val BASE_URL = "https://609a908e0f5a13001721b74e.mockapi.io/picpay/api/"
+    val baseUrl = "https://609a908e0f5a13001721b74e.mockapi.io/picpay/api/"
 
     single {
         Interceptor { chain ->
@@ -38,7 +38,7 @@ val networkModule = module {
 
     single {
         Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(baseUrl)
             .client(get<OkHttpClient>())
             .addConverterFactory(GsonConverterFactory.create())
             .build()

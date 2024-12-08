@@ -1,13 +1,12 @@
 package com.picpay.desafio.android.data.repository
 
 import com.picpay.desafio.android.data.local.UserDao
-import com.picpay.desafio.android.data.local.UserEntity
 import com.picpay.desafio.android.data.remote.PicPayApi
-import com.picpay.desafio.android.data.remote.UserDto
 import com.picpay.desafio.android.domain.model.User
 import com.picpay.desafio.android.domain.repository.UserRepository
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlin.coroutines.cancellation.CancellationException
 
 class UserRepositoryImpl(
     private val api: PicPayApi,
@@ -30,6 +29,7 @@ class UserRepositoryImpl(
         }
     }
 
+    @Suppress("RethrowCaughtException")
     override suspend fun refreshUsers(): List<User> {
         mutex.withLock {
             return try {
@@ -39,7 +39,9 @@ class UserRepositoryImpl(
                 }
 
                 usersFromApi
-            } catch (e: Exception) {
+            } catch (cancellationException: CancellationException) {
+                throw cancellationException
+            } finally {
                 val users = dao.getAllUsers()
                 users.map { it.toDomain() }
             }
@@ -52,32 +54,5 @@ class UserRepositoryImpl(
             .forEach { userEntity ->
                 dao.insertUser(userEntity)
             }
-    }
-
-    private fun UserDto.toDomain(): User {
-        return User(
-            id = id,
-            img = img,
-            name = name,
-            username = username
-        )
-    }
-
-    private fun UserEntity.toDomain(): User {
-        return User(
-            id = id,
-            img = img,
-            name = name,
-            username = username
-        )
-    }
-
-    private fun User.toEntity(): UserEntity {
-        return UserEntity(
-            id = id,
-            img = img,
-            name = name,
-            username = username
-        )
     }
 }
